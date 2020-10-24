@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五度圏暗記</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <style>
+        body {
+            background: thistle;
+            margin: 30px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>五度圏暗記</h1>
+        <div>
+            <button v-on:click="next">次へ</button>
+            <select v-model="key">
+                <option>major</option>
+                <option>minor</option>
+            </select>
+        </div>
+        <img :src="imagePath" width="500px">
+        <hr>
+        <p>
+            <ul>
+                <li>Created by <a href="https://commons.wikimedia.org/wiki/File:Circle_of_fifths_deluxe_4.svg">Just plain Bill (2008)</a></li>
+                <li>Modified by Jumpei Adachi (2020)</li>
+                <li><a href="https://creativecommons.org/licenses/by-sa/3.0/deed.ja">CC BY-SA 3.0</a></li>
+            </ul>
+        </p>
+    </div>
+
+    <script>
+        function randomInt(n) {
+            return Math.floor(Math.random() * n)
+        }
+
+        Array.prototype.sample = function() {
+            const index = Math.floor(Math.random() * this.length)
+            return this[index]
+        }
+        
+        let app = new Vue({
+            el: '#app',
+            data: {
+                key: 'major',
+                shownAnswer: false,
+                name: 'c',
+                names: {
+                    major: ['a', 'ab', 'b', 'bb', 'c', 'cb', 'cs', 'd', 'db', 'e', 'eb', 'f', 'fs', 'g', 'gb'],
+                    minor: ['a', 'b', 'bb', 'c', 'cs', 'd', 'ds', 'e', 'eb', 'f', 'fs', 'g', 'gs']
+                }
+            },
+            computed: {
+                imagePath: function() {
+                    if (this.shownAnswer) {
+                        return `${this.key}_images_answer/${this.name}.svg`
+                    } else {
+                        return `${this.key}_images/${this.name}.svg`
+                    }
+                }
+            },
+            watch: {
+                key: function(newValue, oldValue) {
+                    this.name = this.names[this.key].sample()
+                    this.shownAnswer = false
+                }
+            },
+            methods: {
+                next: function() {
+                    if (this.shownAnswer) {
+                        this.name = this.names[this.key].sample()
+                        this.shownAnswer = false
+                    } else {
+                        this.shownAnswer = true
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>
