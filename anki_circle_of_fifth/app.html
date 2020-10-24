@@ -43,6 +43,7 @@
     </div>
 
     <script>
+        let preloadedImages = []
         function randomInt(n) {
             return Math.floor(Math.random() * n)
         }
@@ -61,7 +62,9 @@
         }
 
         function preload(path) {
-            new Image().src = path
+            let image = new Image()
+            image.src = path
+            preloadedImages.push(image)
         }
         
         let app = new Vue({
@@ -97,8 +100,8 @@
                 }
             },
             created() {
-                for (const key of Object.keys(names)) {
-                    for (const name of names[key]) {
+                for (const key of Object.keys(this.names)) {
+                    for (const name of this.names[key]) {
                         for (const shownAnswer of [false, true]) {
                             preload(intoImagePath(key, name, shownAnswer))
                         }
