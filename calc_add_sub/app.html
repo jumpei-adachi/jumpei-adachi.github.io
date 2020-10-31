@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音名加減算</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <style>
+        body {
+            background: thistle;
+            margin: 30px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>音名加減算</h1>
+        <div>
+            <button @click="next" style="width: 100px; height: 30px">次へ</button>
+        </div>
+        <p style="font-size: xx-large">{{problemText}}</p>
+        <hr>
+        <p>「C+3度=」のような問題が出題されます。この問題の場合、Cの3度上の音であるEが答えになります。「C-3度=」の場合は、Cの3度下の音であるAが答えになります。</p>
+        <p>このプログラムでは答えは表示しますが、正誤判定は行いません。</p>
+    </div>
+
+    <script>
+        // [a, b)
+        function randomInt(a, b) {
+            return Math.floor(Math.random() * (b - a)) + a
+        }
+
+        function randomBool() {
+            return randomInt(0, 2) === 0
+        }
+
+        function randomRHS() {
+            return (randomBool() ? 1 : -1) * randomInt(1, 9)
+        }
+
+        let app = new Vue({
+            el: '#app',
+            data: {
+                names: ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
+                shownAnswer: true,
+                lhs: undefined,
+                rhs: undefined,
+            },
+            computed: {
+                problemText: function() {
+                    let text = ""
+                    if (this.rhs > 0) {
+                        text += `${this.names[this.lhs]} + ${this.rhs}度 = `
+                    } else {
+                        text += `${this.names[this.lhs]} - ${-this.rhs}度 = `
+                    }
+                    const answer = (this.lhs + Math.sign(this.rhs) * (Math.abs(this.rhs) - 1) + 7) % 7
+                    if (this.shownAnswer) {
+                        text += this.names[answer]
+                    }
+                    return text
+                },
+                answerText: function() {
+                    return this.names[answer]
+                }
+            },
+            methods: {
+                next: function() {
+                    if (this.shownAnswer) {
+                        this.lhs = randomInt(0, 7)
+                        this.rhs = randomRHS()
+                        this.shownAnswer = false
+                    } else {
+                        this.shownAnswer = true
+                    }
+                }
+            },
+            created() {
+                this.next()
+            }
+        })
+    </script>
+</body>
+</html>
